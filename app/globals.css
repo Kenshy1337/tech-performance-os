@@ -1,0 +1,404 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Light theme: TronScan-inspired - crisp, minimal, red accent */
+  --background: #f5f7fa;
+  --foreground: #1a1f26;
+  --card: #ffffff;
+  --card-foreground: #1a1f26;
+  --popover: #ffffff;
+  --popover-foreground: #1a1f26;
+  --primary: #cc0000;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #1a1f26;
+  --muted: #f1f5f9;
+  --muted-foreground: #6b7280;
+  --accent: #f1f5f9;
+  --accent-foreground: #1a1f26;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #e5e8ed;
+  --input: #e5e8ed;
+  --ring: #cc0000;
+  --chart-1: #cc0000;
+  --chart-2: #334155;
+  --chart-3: #64748b;
+  --chart-4: #94a3b8;
+  --chart-5: #cbd5e1;
+  --radius: 0.625rem;
+  
+  /* Ring colors - crisp, saturated for light mode (no glow) */
+  --ring-brain: #2563eb;
+  --ring-build: #d97706;
+  --ring-body: #dc2626;
+  --ring-recovery: #059669;
+  
+  /* Tier colors */
+  --tier-bronze: #b45309;
+  --tier-silver: #64748b;
+  --tier-gold: #ca8a04;
+  --tier-platinum: #0891b2;
+  --tier-diamond: #7c3aed;
+  --tier-mythic: #db2777;
+
+  --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  
+  /* Light mode shadows - very soft */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 4px rgba(0,0,0,0.06);
+
+  /* Shadcn sidebar variables */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a1f26;
+  --sidebar-primary: #cc0000;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #1a1f26;
+  --sidebar-border: #e5e8ed;
+  --sidebar-ring: #cc0000;
+}
+
+.dark {
+  /* Dark theme: Premium tech - deep charcoal, neon cyan accent */
+  --background: #0a0a0f;
+  --foreground: #f1f5f9;
+  --card: #141419;
+  --card-foreground: #f1f5f9;
+  --popover: #141419;
+  --popover-foreground: #f1f5f9;
+  --primary: #22d3ee;
+  --primary-foreground: #0a0a0f;
+  --secondary: #1e1e26;
+  --secondary-foreground: #f1f5f9;
+  --muted: #1e1e26;
+  --muted-foreground: #94a3b8;
+  --accent: #1e3a5f;
+  --accent-foreground: #22d3ee;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #262630;
+  --input: #262630;
+  --ring: #22d3ee;
+  --chart-1: #22d3ee;
+  --chart-2: #06b6d4;
+  --chart-3: #0891b2;
+  --chart-4: #0e7490;
+  --chart-5: #155e75;
+  
+  /* Ring colors - neon glow in dark */
+  --ring-brain: #60a5fa;
+  --ring-build: #fbbf24;
+  --ring-body: #f87171;
+  --ring-recovery: #4ade80;
+  
+  /* Tier colors */
+  --tier-bronze: #cd7f32;
+  --tier-silver: #94a3b8;
+  --tier-gold: #facc15;
+  --tier-platinum: #22d3ee;
+  --tier-diamond: #a78bfa;
+  --tier-mythic: #f472b6;
+
+  /* Dark mode shadows - subtle glow */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.4);
+
+  /* Shadcn sidebar variables */
+  --sidebar: #0f0f14;
+  --sidebar-foreground: #f1f5f9;
+  --sidebar-primary: #22d3ee;
+  --sidebar-primary-foreground: #0a0a0f;
+  --sidebar-accent: #1e1e26;
+  --sidebar-accent-foreground: #f1f5f9;
+  --sidebar-border: #262630;
+  --sidebar-ring: #22d3ee;
+}
+
+@theme inline {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Custom colors for rings and tiers */
+  --color-ring-brain: var(--ring-brain);
+  --color-ring-build: var(--ring-build);
+  --color-ring-body: var(--ring-body);
+  --color-ring-recovery: var(--ring-recovery);
+  --color-tier-bronze: var(--tier-bronze);
+  --color-tier-silver: var(--tier-silver);
+  --color-tier-gold: var(--tier-gold);
+  --color-tier-platinum: var(--tier-platinum);
+  --color-tier-diamond: var(--tier-diamond);
+  --color-tier-mythic: var(--tier-mythic);
+
+  /* Shadcn sidebar color mappings (new) */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  
+  html {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  
+  /* Smooth transitions for theme switching */
+  html {
+    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+  }
+  
+  /* Default transition for interactive elements */
+  button, a, input, select, textarea {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+  }
+
+  .emoji {
+    font-family: var(--font-emoji);
+    font-variant-emoji: emoji;
+  }
+  
+  /* Premium card styling - Light: crisp shadow, Dark: subtle glow */
+  .card-premium {
+    @apply border-border/50 bg-card;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+  }
+  .card-premium:hover {
+    box-shadow: var(--shadow-md);
+    @apply border-border/70;
+  }
+  
+  /* Tabular numbers for all metrics */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+  
+  /* Typography utility classes */
+  .metric-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  
+  .metric-value {
+    font-size: 28px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  
+  .metric-value-lg {
+    font-size: 40px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  
+  /* Ring glow - DARK MODE ONLY */
+  .dark .ring-glow {
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+  
+  /* Light mode rings - crisp, NO blur/glow */
+  .ring-stroke {
+    transition: stroke-dashoffset 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Mini ring indicators - premium dots */
+  .ring-dot {
+    border-radius: 9999px;
+    transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+  }
+  
+  /* Light mode: crisp dot with micro shadow */
+  .ring-dot {
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  }
+  
+  /* Dark mode: subtle glow aura */
+  .dark .ring-dot {
+    box-shadow: 0 0 6px currentColor, 0 0 0 1px currentColor;
+  }
+
+  /* Chart active dot glow - dark mode breathing */
+  .chart-active-dot {
+    fill: var(--primary);
+    stroke: var(--primary);
+    stroke-width: 2px;
+  }
+
+  .dark .chart-active-dot {
+    filter: drop-shadow(0 0 6px currentColor);
+    animation: glowPulse 2.8s ease-in-out infinite;
+  }
+}
+
+/* ============================================
+   MOTION SYSTEM - Premium, Minimal, Apple-like
+   ============================================ */
+
+/* Motion timing constants */
+:root {
+  --motion-page: 200ms;
+  --motion-hover: 140ms;
+  --motion-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
+/* 1) Page Transitions - fade + 8px slide-up */
+.page-enter {
+  animation: pageEnter var(--motion-page) var(--motion-ease) forwards;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  0% {
+    filter: drop-shadow(0 0 4px currentColor);
+    opacity: 0.7;
+  }
+  50% {
+    filter: drop-shadow(0 0 10px currentColor);
+    opacity: 1;
+  }
+  100% {
+    filter: drop-shadow(0 0 4px currentColor);
+    opacity: 0.7;
+  }
+}
+
+/* Legacy class for backwards compatibility */
+.page-transition {
+  animation: pageEnter var(--motion-page) var(--motion-ease) forwards;
+}
+
+/* 2) Sidebar pill highlight - smooth movement */
+.nav-pill-highlight {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 0.375rem;
+  background: var(--foreground);
+  opacity: 0.05;
+  transition: 
+    top var(--motion-hover) var(--motion-ease),
+    left var(--motion-hover) var(--motion-ease),
+    width var(--motion-hover) var(--motion-ease),
+    height var(--motion-hover) var(--motion-ease),
+    opacity var(--motion-hover) var(--motion-ease-out);
+}
+
+.dark .nav-pill-highlight {
+  background: var(--primary);
+  opacity: 0.15;
+}
+
+/* Sidebar nav item hover/active transitions */
+.nav-item {
+  position: relative;
+  transition: 
+    color var(--motion-hover) var(--motion-ease-out),
+    background-color var(--motion-hover) var(--motion-ease-out);
+}
+
+/* 3) Calendar range pill - continuous highlight */
+.calendar-range-pill {
+  transition: 
+    background-color var(--motion-hover) var(--motion-ease-out),
+    border-radius var(--motion-hover) var(--motion-ease);
+}
+
+.calendar-day {
+  transition: 
+    background-color var(--motion-hover) var(--motion-ease-out),
+    color var(--motion-hover) var(--motion-ease-out),
+    transform var(--motion-hover) var(--motion-ease);
+}
+
+.calendar-day:active {
+  transform: scale(0.95);
+}
+
+/* 4) Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-page: 0ms;
+    --motion-hover: 0ms;
+  }
+  
+  .page-enter,
+  .page-transition {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .nav-pill-highlight,
+  .nav-item,
+  .calendar-range-pill,
+  .calendar-day,
+  .card-premium,
+  .ring-stroke {
+    transition: none;
+  }
+}
