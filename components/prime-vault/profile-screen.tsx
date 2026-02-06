@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   User,
   Settings,
@@ -35,6 +35,7 @@ import {
   useUpdateTargets,
 } from "@/data/hooks"
 import { UserProfile } from "@/data/types"
+import { useSession } from "next-auth/react"
 
 type ProfileDraft = {
   nickname: string
@@ -66,6 +67,7 @@ const normalizeNumber = (value: number | ""): number | undefined =>
   value === "" ? undefined : Number(value)
 
 export function ProfileScreen() {
+  const { data: session } = useSession()
   const { data: profile } = useProfile()
   const { data: targets } = useTargets()
   const { data: stats } = useStatsSummary()
@@ -78,10 +80,31 @@ export function ProfileScreen() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [draft, setDraft] = useState<ProfileDraft>(() => toDraft(profile))
 
-  const displayProfile = useMemo<UserProfile>(
-    () => profile ?? { id: "local", nickname: "Operator" },
-    [profile],
-  )
+  const sessionName = session?.user?.name?.trim()
+  const sessionAvatar = session?.user?.image?.trim()
+
+  const displayProfile = useMemo<UserProfile>(() => {
+    const base: UserProfile = profile ?? { id: "local", nickname: sessionName ?? "Operator" }
+    return {
+      ...base,
+      nickname: base.nickname || sessionName || "Operator",
+      avatarDataUrl: base.avatarDataUrl || sessionAvatar || undefined,
+    }
+  }, [profile, sessionName, sessionAvatar])
+
+  useEffect(() => {
+    if (!profile) return
+    const updates: Partial<UserProfile> = {}
+    if (!profile.avatarDataUrl && sessionAvatar) {
+      updates.avatarDataUrl = sessionAvatar
+    }
+    if ((!profile.nickname || profile.nickname === "Operator") && sessionName) {
+      updates.nickname = sessionName
+    }
+    if (Object.keys(updates).length > 0) {
+      updateProfile.mutate(updates)
+    }
+  }, [profile, sessionAvatar, sessionName, updateProfile])
 
   const openEditor = () => {
     setDraft(toDraft(profile))
@@ -141,7 +164,7 @@ export function ProfileScreen() {
 
   return (
     <div className="space-y-6">
-      <Card className="card-premium">
+      <Card className="card-premium" data-tour="profile-summary">
         <CardContent className="flex flex-col gap-4 py-6 sm:flex-row sm:items-center">
           <div className="relative flex size-16 items-center justify-center overflow-hidden rounded-full bg-muted">
             {displayProfile.avatarDataUrl ? (

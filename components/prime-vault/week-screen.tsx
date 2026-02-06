@@ -44,7 +44,7 @@ export function WeekScreen() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-tour="week-header">
         <div>
           <h2 className="text-xl font-semibold tracking-tight text-foreground">
             {format(currentWeek, "MMM d")} - {format(addDays(currentWeek, 6), "MMM d, yyyy")}

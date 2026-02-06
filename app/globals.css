@@ -212,9 +212,27 @@
     box-shadow: var(--shadow-sm);
     transition: box-shadow 0.2s ease-out, border-color 0.2s ease-out;
   }
-  .card-premium:hover {
-    box-shadow: var(--shadow-md);
-    @apply border-border/70;
+.card-premium:hover {
+  box-shadow: var(--shadow-md);
+  @apply border-border/70;
+}
+
+  /* Onboarding tour spotlight */
+  .tour-spotlight {
+    position: absolute;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: transparent;
+    backdrop-filter: none;
+    pointer-events: none;
+  }
+
+  .tour-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 24px rgba(255, 255, 255, 0.18);
+    animation: tourPulse 2.6s ease-in-out infinite;
   }
   
   /* Tabular numbers for all metrics */
@@ -327,6 +345,18 @@
   }
 }
 
+@keyframes tourPulse {
+  0% {
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 36px rgba(255, 255, 255, 0.35);
+  }
+  100% {
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.15);
+  }
+}
+
 /* Legacy class for backwards compatibility */
 .page-transition {
   animation: pageEnter var(--motion-page) var(--motion-ease) forwards;
@@ -391,6 +421,10 @@
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  .tour-pulse {
+    animation: none;
   }
   
   .nav-pill-highlight,

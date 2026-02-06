@@ -9,7 +9,7 @@ interface BrandLogoProps {
 }
 
 /**
- * VECTOR - Tech Performance OS
+ * VECTOR - Performance OS
  * 
  * Logo Concept: Vector Rings
  * - 3 thermal arcs (rings) representing Brain, Build, Body

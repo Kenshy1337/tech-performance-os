@@ -67,7 +67,7 @@ export function AppSidebar({
     <aside
       data-tour="sidebar"
       className={cn(
-        "relative hidden flex-col border-r border-border/60 bg-sidebar lg:flex",
+        "relative z-50 hidden flex-col border-r border-border/60 bg-sidebar lg:flex",
         "transition-[width] duration-200",
         collapsed ? "w-16" : "w-60"
       )}

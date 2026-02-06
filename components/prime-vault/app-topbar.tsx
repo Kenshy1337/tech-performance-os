@@ -1,7 +1,9 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { Sun, Moon, Menu, User } from "lucide-react"
+import { Sun, Moon, Menu, User, LogOut, LogIn } from "lucide-react"
+import { useSession, signOut } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -20,6 +22,8 @@ interface AppTopbarProps {
 
 export function AppTopbar({ title, onToggleSidebar }: AppTopbarProps) {
   const { theme, setTheme } = useTheme()
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border/60 bg-background/95 px-4 backdrop-blur-md lg:px-6">
@@ -63,21 +67,32 @@ export function AppTopbar({ title, onToggleSidebar }: AppTopbarProps) {
         {/* User Avatar Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-9 overflow-hidden rounded-full"
-            >
+            <Button variant="ghost" size="icon" className="size-9 overflow-hidden rounded-full">
               <div className="flex size-7 items-center justify-center rounded-full bg-muted">
-                <User className="size-3.5 text-muted-foreground" />
+                {session?.user?.image ? (
+                  <img src={session.user.image} alt="Avatar" className="size-7 rounded-full object-cover" />
+                ) : (
+                  <User className="size-3.5 text-muted-foreground" />
+                )}
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-44">
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuContent align="end" className="w-52">
+            {session?.user?.email && (
+              <div className="px-3 py-2 text-xs text-muted-foreground">{session.user.email}</div>
+            )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Sign out</DropdownMenuItem>
+            {status === "authenticated" ? (
+              <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/login" })}>
+                <LogOut className="mr-2 size-4" />
+                Sign out
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem onClick={() => router.push("/login")}>
+                <LogIn className="mr-2 size-4" />
+                Sign in
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
