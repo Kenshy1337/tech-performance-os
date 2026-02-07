@@ -83,7 +83,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-root">
+    <div className="login-root dark">
       <div className="login-bg" aria-hidden />
 
       <div className="login-grid">
@@ -93,8 +93,8 @@ export default function LoginPage() {
               <Sparkle className="size-3.5" />
               <span>Vector Access</span>
             </div>
-            <CardTitle className="font-display text-3xl tracking-tight">Welcome to Vector Dashboard</CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <CardTitle className="login-title font-display text-3xl tracking-tight">Welcome to Vector Dashboard</CardTitle>
+            <p className="login-subtitle text-sm">
               Continue with Google or use a secure email code.
             </p>
           </CardHeader>
@@ -116,28 +116,30 @@ export default function LoginPage() {
                 <span className="w-full border-t border-border/50" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">or email code</span>
+                <span className="login-divider-pill px-2">or email code</span>
               </div>
             </div>
 
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
+                <label className="login-label text-xs font-medium uppercase tracking-wide">Email</label>
                 <Input
                   type="email"
                   value={email}
                   placeholder="you@example.com"
+                  className="login-input"
                   onChange={(event) => setEmail(event.target.value)}
                 />
               </div>
 
               {step === "code" && (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Code</label>
+                  <label className="login-label text-xs font-medium uppercase tracking-wide">Code</label>
                   <Input
                     type="text"
                     value={code}
                     placeholder="6-digit code"
+                    className="login-input"
                     onChange={(event) => setCode(event.target.value)}
                   />
                 </div>
@@ -146,7 +148,7 @@ export default function LoginPage() {
               <div className="grid gap-2 sm:grid-cols-2">
                 <Button
                   variant="outline"
-                  className="justify-start gap-2"
+                  className="login-action-secondary justify-start gap-2"
                   onClick={handleSendCode}
                   disabled={!email || isSending}
                 >
@@ -154,7 +156,7 @@ export default function LoginPage() {
                   {isSending ? "Sending..." : "Send code"}
                 </Button>
                 <Button
-                  className="justify-start gap-2"
+                  className="login-action-primary justify-start gap-2"
                   onClick={handleVerify}
                   disabled={step !== "code" || !code || isVerifying}
                 >
@@ -181,9 +183,9 @@ export default function LoginPage() {
 
         <Card className="card-premium login-card-side">
           <CardHeader>
-            <CardTitle className="font-display text-xl tracking-tight">Why sign in?</CardTitle>
+            <CardTitle className="login-side-title font-display text-xl tracking-tight">Why sign in?</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 text-sm text-muted-foreground">
+          <CardContent className="login-side-copy space-y-4 text-sm">
             <p>Sync Prime Score, domain history, and achievements across sessions.</p>
             <p>Keep your onboarding, profile, and progression attached to one account.</p>
             <p>Sign out any time. Your data model remains exportable.</p>
