@@ -1,12 +1,25 @@
 import { neon } from "@neondatabase/serverless"
 
-const databaseUrl = process.env.DATABASE_URL
+type SqlClient = ReturnType<typeof neon>
 
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL is not set")
+let sqlClient: SqlClient | null = null
+
+function getSqlClient() {
+  if (sqlClient) return sqlClient
+
+  const databaseUrl = process.env.DATABASE_URL
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL is not set")
+  }
+
+  sqlClient = neon(databaseUrl)
+  return sqlClient
 }
 
-export const sql = neon(databaseUrl)
+export const sql: SqlClient = ((...args: Parameters<SqlClient>) => {
+  const client = getSqlClient()
+  return client(...args)
+}) as SqlClient
 
 export async function ensureAuthSchema() {
   await sql`

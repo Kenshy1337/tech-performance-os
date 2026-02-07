@@ -14,11 +14,11 @@ export async function POST(request: Request) {
 
   await ensureAuthSchema()
 
-  const existing = await sql`
+  const existing = (await sql`
     SELECT created_at
     FROM auth_email_codes
     WHERE email = ${email}
-  `
+  `) as Array<{ created_at: string }>
 
   if (existing.length > 0) {
     const createdAt = new Date(existing[0].created_at)

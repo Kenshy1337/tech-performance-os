@@ -31,11 +31,16 @@ const handler = NextAuth({
         await ensureAuthSchema()
 
         const hashed = hashOtp(email, code)
-        const rows = await sql`
+        const rows = (await sql`
           SELECT email, code_hash, expires_at, attempts
           FROM auth_email_codes
           WHERE email = ${email}
-        `
+        `) as Array<{
+          email: string
+          code_hash: string
+          expires_at: string
+          attempts: number
+        }>
 
         const record = rows[0]
         if (!record) return null
