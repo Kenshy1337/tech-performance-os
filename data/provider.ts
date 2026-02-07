@@ -411,6 +411,8 @@ export class IndexedDbProvider implements DataProvider {
 
     const focusMap = mapByDateKey(focuses)
     const recoveryMap = mapByDateKey(recoveries)
+    const logsByDate = groupByDateKey(logs)
+    const deliverablesByDate = groupByDateKey(deliverables)
 
     const days = buildDateKeyRange(toDateKey(monthStart), toDateKey(monthEnd))
 

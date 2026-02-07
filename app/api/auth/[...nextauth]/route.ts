@@ -4,12 +4,17 @@ import Credentials from "next-auth/providers/credentials"
 import { sql, ensureAuthSchema } from "@/lib/auth/db"
 import { hashOtp } from "@/lib/auth/otp"
 
+// TODO(auth env): NEXTAUTH_URL, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+const appRedirectUrl = process.env.NEXT_PUBLIC_APP_URL || "/app"
+
 const handler = NextAuth({
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   providers: [
     Google({
+      // TODO: Set GOOGLE_CLIENT_ID in environment variables.
       clientId: process.env.GOOGLE_CLIENT_ID || "",
+      // TODO: Set GOOGLE_CLIENT_SECRET in environment variables.
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
     Credentials({
@@ -91,6 +96,25 @@ const handler = NextAuth({
         session.user.image = token.picture as string
       }
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      const destination = appRedirectUrl.startsWith("http")
+        ? appRedirectUrl
+        : `${baseUrl}${appRedirectUrl}`
+
+      if (url.startsWith("/")) {
+        if (url === "/" || url === "/login") return destination
+        return `${baseUrl}${url}`
+      }
+
+      if (url.startsWith(baseUrl)) {
+        if (url === baseUrl || url === `${baseUrl}/` || url.endsWith("/login")) {
+          return destination
+        }
+        return url
+      }
+
+      return destination
     },
   },
 })

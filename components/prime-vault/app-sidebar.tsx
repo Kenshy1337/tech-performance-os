@@ -11,7 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { ScreenType } from "@/app/page"
+import type { ScreenType } from "@/app/app/page"
 import { BrandLogo, VectorIcon } from "./brand-logo"
 
 interface AppSidebarProps {

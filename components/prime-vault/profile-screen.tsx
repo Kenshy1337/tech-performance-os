@@ -116,8 +116,9 @@ export function ProfileScreen() {
     if (!file) return
     const reader = new FileReader()
     reader.onload = () => {
-      if (typeof reader.result === "string") {
-        setDraft((prev) => ({ ...prev, avatarDataUrl: reader.result }))
+      const result = reader.result
+      if (typeof result === "string") {
+        setDraft((prev) => ({ ...prev, avatarDataUrl: result }))
       }
     }
     reader.readAsDataURL(file)

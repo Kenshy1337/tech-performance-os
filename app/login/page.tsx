@@ -1,13 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { signIn, useSession } from "next-auth/react"
+import { Mail, ShieldCheck, Sparkle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { Mail, ShieldCheck } from "lucide-react"
+
+const appRedirect = process.env.NEXT_PUBLIC_APP_URL || "/app"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -20,16 +22,23 @@ export default function LoginPage() {
   const [step, setStep] = useState<"email" | "code">("email")
   const [message, setMessage] = useState<string | null>(null)
 
+  const isError = useMemo(
+    () => Boolean(message && /(fail|invalid|error|wait)/i.test(message)),
+    [message],
+  )
+
   useEffect(() => {
     if (status === "authenticated") {
-      router.replace("/")
+      router.replace(appRedirect)
     }
   }, [status, router])
 
   const handleSendCode = async () => {
     if (!email) return
+
     setIsSending(true)
     setMessage(null)
+
     try {
       const response = await fetch("/api/auth/request-otp", {
         method: "POST",
@@ -43,7 +52,7 @@ export default function LoginPage() {
       }
 
       setStep("code")
-      setMessage("Code sent. Check your email.")
+      setMessage("Code sent. Check your inbox.")
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Failed to send code")
     } finally {
@@ -53,11 +62,14 @@ export default function LoginPage() {
 
   const handleVerify = async () => {
     if (!email || !code) return
+
     setIsVerifying(true)
     setMessage(null)
+
     const result = await signIn("credentials", {
       email,
       code,
+      callbackUrl: appRedirect,
       redirect: false,
     })
 
@@ -67,58 +79,65 @@ export default function LoginPage() {
       return
     }
 
-    router.replace("/")
+    router.replace(appRedirect)
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="grid w-full max-w-4xl grid-cols-1 gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card className="card-premium overflow-hidden">
-          <CardHeader className="space-y-2">
-            <CardTitle className="text-2xl font-semibold">Welcome to Vector</CardTitle>
+    <div className="login-root">
+      <div className="login-bg" aria-hidden />
+
+      <div className="login-grid">
+        <Card className="login-card-main card-premium">
+          <CardHeader className="space-y-3">
+            <div className="login-kicker">
+              <Sparkle className="size-3.5" />
+              <span>Vector Access</span>
+            </div>
+            <CardTitle className="font-display text-3xl tracking-tight">Welcome to Vector Dashboard</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Sign in to track Prime Score, unlock achievements, and sync your progress.
+              Continue with Google or use a secure email code.
             </p>
           </CardHeader>
-          <CardContent className="space-y-4">
+
+          <CardContent className="space-y-5">
             <Button
               variant="outline"
-              className="w-full justify-start gap-3 border border-border/60 bg-white/80 text-foreground shadow-sm hover:bg-muted/60 dark:bg-[#0f1115] dark:text-foreground dark:hover:bg-[#161b24]"
-              onClick={() => signIn("google", { callbackUrl: "/" })}
+              className="login-google-btn"
+              onClick={() => signIn("google", { callbackUrl: appRedirect })}
             >
-              <span className="flex size-7 items-center justify-center rounded-md bg-white shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:bg-[#0b0f14] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]">
-                <GoogleMark className="size-4" />
+              <span className="login-google-mark-shell" aria-hidden>
+                <GoogleMark className="login-google-mark" />
               </span>
-              Continue with Google
+              <span>Continue with Google</span>
             </Button>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border/60" />
+                <span className="w-full border-t border-border/50" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or email code</span>
+                <span className="bg-card px-2 text-muted-foreground">or email code</span>
               </div>
             </div>
 
             <div className="space-y-3">
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-muted-foreground">Email</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
                 <Input
                   type="email"
-                  placeholder="you@example.com"
                   value={email}
+                  placeholder="you@example.com"
                   onChange={(event) => setEmail(event.target.value)}
                 />
               </div>
 
               {step === "code" && (
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-muted-foreground">Code</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Code</label>
                   <Input
                     type="text"
-                    placeholder="6-digit code"
                     value={code}
+                    placeholder="6-digit code"
                     onChange={(event) => setCode(event.target.value)}
                   />
                 </div>
@@ -140,7 +159,7 @@ export default function LoginPage() {
                   disabled={step !== "code" || !code || isVerifying}
                 >
                   <ShieldCheck className="size-4" />
-                  {isVerifying ? "Verifying..." : "Verify & Sign in"}
+                  {isVerifying ? "Verifying..." : "Verify & Start"}
                 </Button>
               </div>
 
@@ -148,7 +167,7 @@ export default function LoginPage() {
                 <div
                   className={cn(
                     "rounded-md border px-3 py-2 text-xs",
-                    message.toLowerCase().includes("fail") || message.toLowerCase().includes("invalid")
+                    isError
                       ? "border-destructive/40 text-destructive"
                       : "border-emerald-500/40 text-emerald-600 dark:text-emerald-400",
                   )}
@@ -160,14 +179,14 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        <Card className="card-premium">
-          <CardHeader className="space-y-2">
-            <CardTitle className="text-lg font-semibold">Why sign in?</CardTitle>
+        <Card className="card-premium login-card-side">
+          <CardHeader>
+            <CardTitle className="font-display text-xl tracking-tight">Why sign in?</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-muted-foreground">
-            <p>Save your Prime Score history, achievements, and daily logs.</p>
-            <p>Access Vector from any device.</p>
-            <p>Unlock personalized insights and long-term streaks.</p>
+          <CardContent className="space-y-4 text-sm text-muted-foreground">
+            <p>Sync Prime Score, domain history, and achievements across sessions.</p>
+            <p>Keep your onboarding, profile, and progression attached to one account.</p>
+            <p>Sign out any time. Your data model remains exportable.</p>
           </CardContent>
         </Card>
       </div>
@@ -177,29 +196,29 @@ export default function LoginPage() {
 
 function GoogleMark({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 48 48"
-      className={className}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="#EA4335"
-        d="M24 9.5c3.15 0 5.98 1.1 8.21 2.91l5.62-5.62C34.36 3.71 29.49 1.5 24 1.5 14.63 1.5 6.57 6.95 2.67 14.9l6.73 5.23C11.1 14.05 16.05 9.5 24 9.5z"
-      />
-      <path
-        fill="#4285F4"
-        d="M46.5 24.5c0-1.56-.14-3.05-.4-4.5H24v9h12.66c-.55 2.94-2.2 5.43-4.66 7.12l7.1 5.52c4.15-3.83 6.4-9.48 6.4-17.14z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M9.4 28.02a14.78 14.78 0 0 1 0-8.04l-6.73-5.23A22.49 22.49 0 0 0 1.5 24c0 3.64.87 7.07 2.42 10.11l6.73-6.09z"
-      />
-      <path
-        fill="#34A853"
-        d="M24 46.5c5.49 0 10.1-1.82 13.47-4.94l-7.1-5.52c-1.97 1.32-4.49 2.1-6.37 2.1-7.95 0-12.9-4.55-14.6-10.62l-6.73 6.09C6.57 41.05 14.63 46.5 24 46.5z"
-      />
-      <path fill="none" d="M1.5 1.5h45v45h-45z" />
+    <svg viewBox="0 0 120 120" className={className} aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="g-red" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#ff7a59" />
+          <stop offset="1" stopColor="#ff3f5e" />
+        </linearGradient>
+        <linearGradient id="g-yellow" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffd84d" />
+          <stop offset="1" stopColor="#f4cc00" />
+        </linearGradient>
+        <linearGradient id="g-green" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#8bcf00" />
+          <stop offset="1" stopColor="#1fc46b" />
+        </linearGradient>
+        <linearGradient id="g-blue" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#4a8df5" />
+          <stop offset="1" stopColor="#2cb3ff" />
+        </linearGradient>
+      </defs>
+      <path d="M58 12c13 0 24 5 32 13L79 36c-6-5-13-8-21-8-17 0-31 11-36 27L8 45C15 25 34 12 58 12z" fill="url(#g-red)" />
+      <path d="M22 55c-1 3-2 6-2 10s1 7 2 10L8 85C4 77 2 69 2 65c0-7 2-15 6-23l14 13z" fill="url(#g-yellow)" />
+      <path d="M22 75c5 16 19 27 36 27 9 0 17-3 23-9l12 9c-9 10-22 16-35 16-24 0-43-13-50-33l14-10z" fill="url(#g-green)" />
+      <path d="M118 65c0-4-1-8-2-12H58v22h34c-2 9-7 16-15 21l12 9c12-10 19-24 19-40z" fill="url(#g-blue)" />
     </svg>
   )
 }

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import type { ScreenType } from "@/app/page"
+import type { ScreenType } from "@/app/app/page"
 
 export type TourStep = {
   id: string
